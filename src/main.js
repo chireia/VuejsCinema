@@ -1,15 +1,23 @@
 import Vue from 'vue';
 import './style.scss';
 
-import { timingSafeEqual } from 'crypto';
 
 import MovieList from './components/MovieList.vue';
 import MovieFilter from './components/MovieFilter.vue';
+
+import VueResouce from 'vue-resource';
+Vue.use(VueResouce);
+
+import moment from 'moment-timezone';
+Object.defineProperty(Vue.prototype, '$moment', { get () {return this.$root.moment} }); 
+
 new Vue({
     el: '#app',
     data: {
         genre: [],
-        time: []
+        time: [],
+        movies: [],
+        a: moment
     },
     methods: {
         checkFilter(category, title, checked) {
@@ -26,6 +34,13 @@ new Vue({
     components: {
         MovieList,
         MovieFilter
+    },
+    created(){
+        this.$http.get('/api').then(
+            response => {
+                this.movies = response.data;
+            }
+        )
     }
 
 });
